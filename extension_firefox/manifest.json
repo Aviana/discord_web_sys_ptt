@@ -1,7 +1,7 @@
 {
 
   "description": "Discord Web system-wide push to talk through xdg-desktop-portal",
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Discord System-Wide PTT",
   "version": "1.0",
   "icons": {
@@ -17,23 +17,19 @@
   "background": {
     "scripts": ["background.js"]
   },
-
-  "browser_action": {
-    "default_icon": "icons/ptt.svg"
-  },
   
   "content_scripts": [{
     "matches": [
-      "https://discordapp.com/*",
       "https://discord.com/*"
     ],
-    "run_at": "document_start",
+    "run_at": "document_end",
     "js": ["content.js"]
   }],
 
   "permissions": [
     "nativeMessaging",
-    "storage"
+    "storage",
+    "tabs"
   ]
 
 }

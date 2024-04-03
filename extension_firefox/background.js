@@ -10,19 +10,11 @@ let port = chrome.runtime.connectNative("com.aviana.discord_web_sys_ptt");
 const MIN_PTT_LENGTH_DEFAULT = 800;
 
 /**
- * Runs the given callback with the tab ID for the broadcasting Discord tab, if
- * one exists.
- *
- * @param {function(number)} cb - A callback that will be run on the
- *     broadcasting Discord tab ID.
+ * The URL prefix that indicates the page is an instance of the Discord
+ * web app.
+ * @const {string}
  */
-function withBroadcastingTab(cb) {
-  chrome.storage.local.get('broadcastingTab', function(result) {
-    if (result.broadcastingTab != null) {
-      cb(result.broadcastingTab);
-    }
-  });
-}
+const DISCORD_APP_URL = 'https://discord.com/channels';
 
 /**
  * Propogates the stored min PTT length, or the default (if no value has been stored).
@@ -49,33 +41,16 @@ function onMinPttLengthChanged(minPttLength) {
     minPttLength: minPttLength,
   });
 
-  // Send message to Discord tab.
-  withBroadcastingTab(function(id) {
-    chrome.tabs.sendMessage(id, {
-      id: 'min_ptt_length_changed',
-      value: minPttLength,
+  // Send message to all Discord tabs.
+  chrome.tabs.query({}, function(tabs) {
+    tabs.forEach(function (tab) {
+      if (tab.url && tab.url.startsWith(DISCORD_APP_URL)) {
+        chrome.tabs.sendMessage(tab.id, {
+          id: 'min_ptt_length_changed',
+          value: minPttLength,
+        });
+      }
     });
-  });
-}
-
-/**
- * Updates extension badge when a Discord tab starts / stops broadcasting.
- *
- * @param {number} id - The ID of the tab that has started or stopped broadcasting.
- * @param {boolean} broadcasting - true if this is as notice that broadcasting
- *     has started.
- */
-function onBroadcastingNotice(id, broadcasting) {
-  chrome.storage.local.get('broadcastingTab', function(result) {
-    if (broadcasting) {
-      chrome.storage.local.set({
-        broadcastingTab: id,
-      });
-    } else if (result.broadcastingTab === id) {
-      chrome.storage.local.set({
-        broadcastingTab: null,
-      });
-    }
   });
 }
 
@@ -86,23 +61,23 @@ chrome.runtime.onMessage.addListener(function(msg, sender, cb) {
   } else if (msg.id === 'min_ptt_length_changed') {
     onMinPttLengthChanged(msg.value);
     return false;
-  } else if (msg.id === 'broadcasting' && sender != null &&
-    sender.tab != null && sender.tab.id != null) {
-    onBroadcastingNotice(sender.tab.id, msg.value);
-    return false;
   }
 
   return false;
 });
 
 /*
-Listen for messages from the app.
+Listen for messages from the native app and forward them to all discord tabs.
 */
 port.onMessage.addListener((response) => {
-  console.log("Got binding from portal: " + response)
-  withBroadcastingTab(function(id) {
-    chrome.tabs.sendMessage(id, {
-      id: 'ext_shortcut_pushed',
+  // Send message to Discord tab.
+  chrome.tabs.query({}, function(tabs) {
+    tabs.forEach(function (tab) {
+      if (tab.url && tab.url.startsWith(DISCORD_APP_URL)) {
+        chrome.tabs.sendMessage(tab.id, {
+          id: 'ext_shortcut_pushed',
+        });
+      }
     });
   });
 });
