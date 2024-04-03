@@ -1,0 +1,39 @@
+{
+
+  "description": "Discord Web system-wide push to talk through xdg-desktop-portal",
+  "manifest_version": 2,
+  "name": "Discord System-Wide PTT",
+  "version": "1.0",
+  "icons": {
+    "48": "icons/ptt.svg"
+  },
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "discord-web-sys-ptt@aviana"
+    }
+  },
+
+  "background": {
+    "scripts": ["background.js"]
+  },
+
+  "browser_action": {
+    "default_icon": "icons/ptt.svg"
+  },
+  
+  "content_scripts": [{
+    "matches": [
+      "https://discordapp.com/*",
+      "https://discord.com/*"
+    ],
+    "run_at": "document_start",
+    "js": ["content.js"]
+  }],
+
+  "permissions": [
+    "nativeMessaging",
+    "storage"
+  ]
+
+}

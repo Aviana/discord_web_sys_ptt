@@ -1,0 +1,9 @@
+{
+  "name": "com.aviana.discord_web_sys_ptt",
+  "description": "XDG Desktop Portal interface for the browser",
+  "path": "/usr/lib/discord-web-sys-ptt/xdg-desktop-portal/portal.py",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://lfebhhhnemkekcjmnbkegcpkphdoccon/"
+  ]
+}
