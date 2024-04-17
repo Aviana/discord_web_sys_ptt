@@ -1,4 +1,4 @@
-Firefox is broken due to them not pupulating the UIEvent "which" field for extension simulated inputs. But the discord web client evaluated this field.
+Firefox is broken due to them not pupulating the UIEvent "which" field for inputs simulated by extensions. But the discord web client evaluates this field.
 
 The portal is broken on KDE <= 6.0.3 and generally until (https://bugs.kde.org/show_bug.cgi?id=484525) is fixed. On Gnome it is not implemented (https://gitlab.gnome.org/GNOME/xdg-desktop-portal-gnome/-/issues/47). It might work on hyprland though (not tested).
 
@@ -10,5 +10,5 @@ To try it you have to install the native part AND the actual browser extension.
 - Load the addon into your browser (See your respective browsers guide on how to manually load local addons)
 - After the first launch the bind should show up wherever your DE puts xdg-desktop-portal key bindings
 
-Interface work with discord web app based on:
+Code that is interfacing with the discord web app based on:
 https://github.com/mjmartis/discord_web_sys_ptt
